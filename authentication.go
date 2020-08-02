@@ -7,10 +7,15 @@ import (
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
-type Response struct {
+type InstallationResponse struct {
+	Id int
+}
+
+type TokenResponse struct {
 	Token string
 }
 
@@ -42,24 +47,37 @@ func GenerateAccessToken(s *Source, now time.Time) (string, error) {
 	} else {
 		endpoint = "https://api.github.com"
 	}
-	request, err := http.NewRequest("POST", endpoint+"/app/installations/"+s.InstallationId+"/access_tokens", nil)
+
+	installationResponse := callApi("GET", endpoint+"/repos/"+s.Repository+"/installation", signedJwt)
+	var ir InstallationResponse
+	err = json.NewDecoder(installationResponse.Body).Decode(&ir)
 	if err != nil {
 		panic(err)
 	}
-	request.Header.Add("Authorization", "Bearer "+signedJwt)
-	request.Header.Add("Accept", "application/vnd.github.machine-man-preview+json")
+
+	tokenResponse := callApi("POST", endpoint+"/app/installations/"+strconv.Itoa(ir.Id)+"/access_tokens", signedJwt)
+
+	var tr TokenResponse
+	err = json.NewDecoder(tokenResponse.Body).Decode(&tr)
+	if err != nil {
+		panic(err)
+	}
+
+	return tr.Token, nil
+}
+
+func callApi(method string, endpoint string, signedJwt string) *http.Response {
+	tokenRequest, err := http.NewRequest(method, endpoint, nil)
+	if err != nil {
+		panic(err)
+	}
+	tokenRequest.Header.Add("Authorization", "Bearer "+signedJwt)
+	tokenRequest.Header.Add("Accept", "application/vnd.github.machine-man-preview+json")
 	client := &http.Client{}
-	response, err := client.Do(request)
+	response, err := client.Do(tokenRequest)
 
 	if err != nil {
 		panic(err)
 	}
-
-	var r Response
-	err = json.NewDecoder(response.Body).Decode(&r)
-	if err != nil {
-		panic(err)
-	}
-
-	return r.Token, nil
+	return response
 }
