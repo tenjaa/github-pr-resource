@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -45,7 +46,7 @@ func GenerateAccessToken(s *Source, now time.Time) (string, error) {
 
 	var endpoint string
 	if s.V3Endpoint != "" {
-		endpoint = s.V3Endpoint
+		endpoint = strings.TrimRight(s.V3Endpoint, "/")
 	} else {
 		endpoint = "https://api.github.com"
 	}

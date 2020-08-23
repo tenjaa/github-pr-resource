@@ -111,10 +111,21 @@ func TestGenerateAccessToken(t *testing.T) {
 			},
 			expectedAccessToken: "v1.b71be873ad96e64a84025ae7bee7694a99cb4ba9",
 		},
+		{
+			description: "handle trailing slash",
+			source: resource.Source{
+				Repository:     "itsdalmo/test-repository",
+				AppId:          "69592",
+				PrivateKey:     "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAv6oJaa+0BCOT0dITtJK6oPfrE2R0Iynofj/a/vq4rfAw2MJp\nXA5l6WbwmQhevSm8sIYNb2T32qLyRsVXwBo1J8ovIoTXiPdsV41D19tytjctnf+u\n0LncTo2JJR3ik7/Ynu5Id4zjnsn1pYqwLX4EFxgCuEKwdZutPyiY2J7wATfsTtOJ\nsLF8idQijG23i5Obs6AWCZcHOhvdgfYAUOxLv2WRkCG5O1aXYa6nqVn0AgRgKjaJ\nnAENEoG7O9OEWIcUiG30riQouxMHfj0bATCvYoj7a2tvn4CUqk+SBODyh3Fvi0oC\na/NCBYFeK/5uUNyXQHqWy7xEVRef5lC0XbrUVwIDAQABAoIBAFDdqhkIQ/iXFjAp\n5ZyDZ/CwiWNmN8X6UZiq0nhQSolA1SsvY4qunHsMrqiyql4/dNg5xwNf419A7t3D\nN5HavOCr4pU63UFxuyl5dc1mTpDo2PtXvGdec8BE4T9iy40xHXF48eRW8la1uUn+\nKPUYvRsNS2B46sDETSVfuJV1AahRN6aD2WnzQ7wB+S/mqsPXqy+S2zobnU70Wzmt\nhYQzsuIY+BkfOCS565guYvJt66wRGi/NsnybC6z3iRZxZygtKorMKXPjmtdoyCZ3\njkOHhXV5XH8Ldut+1mycg+6c+dTZ9RTrAzo4ouofptm9+ZNlv1aK7HrDDKYQ/x/z\n70hhIfkCgYEA7aNt7db3S6sTEA+yC5DLxxkFIK7K8qxdP6vE087fdHO+ik1LvyI+\ni5Wqj/fT2d/lYR+cbH/zy2JBy5RWfdVJ9HBW/eZ9RqQx8ry7lE5MqbwU6y+d2bCF\nAjffx3yJK1aljuVLdGeu8abYsusUQUhbslZJNg6Ar7z+FUHaChJI0KsCgYEAznk4\nx+5PtvIWj6aXTJiqtofnOtHXXxrq5alzBErvDBHHzP9/ZCucHxJZ4zqHWduj2+9b\nJUgk2BH3+wFMVKpcdTld2iTFWGaFsArTJkE4SBQGx3zcdsoESOnu/DrOTFNu+LiV\nhLzb9CHKM91fIet8MYYxKiyH09+Mi7xBtw8WQwUCgYAH/tCrCOmHHTll9/E4nGWO\nzFO01syzP4NfqgrUSYiRJXfKtXEP/Dn4fk+fymnRUcwo6WRc7i0osaSfEd2bHDsB\nw2nZ3xBl+Q5JKXpyMfQ4XcCibRa1hU/kVDbuQk1nLOIjHandP8POE5wE4Q3saF/V\nbzvFWtWPlB9EXdPVNOpIQwKBgHkJEsIQ72XdUGBxVewu6pQJ4wDWFhzIWL68sJHp\no2w92BRSCkmcTu7gARV1L/b7DHlXPOUD/6UyE15vCmHvZDfLozrHp3AE2YWzMsgQ\nH4ARTVAP3+U603wytkfh6SFRH5JqEiw30fCxBimVMbleo/UcJyID7LPFLkyT1SoM\njA5JAoGACEhaHTXWFYXv+eTJUXFcwhDZ5sRvQYRCTLGSv746lr+SpZ02bEcRvaTH\nv0K1Hph6OzhcCO27VdimngnzsoXoa2OXicWpdjX3hqhXMvwspe9a1y9u7LPZwqJH\n9Kc7VaZP1iS4EIxEc+qx38HqdeiUBcqTMRam6k3mSwactBKCKDI=\n-----END RSA PRIVATE KEY-----\n",
+				V3Endpoint:     ts.URL + "/",
+			},
+			expectedAccessToken: "v1.b71be873ad96e64a84025ae7bee7694a99cb4ba9",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			got, _ := resource.GenerateAccessToken(&tt.source, time.Unix(1592691442, 0))
+			got, err := resource.GenerateAccessToken(&tt.source, time.Unix(1592691442, 0))
+			assert.Nil(t, err)
 			assert.Equal(t, tt.expectedAccessToken, got)
 		})
 	}
