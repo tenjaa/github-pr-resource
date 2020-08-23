@@ -4,9 +4,11 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -52,6 +54,8 @@ func GenerateAccessToken(s *Source, now time.Time) (string, error) {
 	var ir InstallationResponse
 	err = json.NewDecoder(installationResponse.Body).Decode(&ir)
 	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf("Error decoding installation response with status %d", installationResponse.StatusCode))
+		_, _ = fmt.Fprintln(os.Stderr, installationResponse.Body)
 		panic(err)
 	}
 
@@ -60,6 +64,8 @@ func GenerateAccessToken(s *Source, now time.Time) (string, error) {
 	var tr TokenResponse
 	err = json.NewDecoder(tokenResponse.Body).Decode(&tr)
 	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, fmt.Sprintf("Error decoding token response with status %d", tokenResponse.StatusCode))
+		_, _ = fmt.Fprintln(os.Stderr, tokenResponse.Body)
 		panic(err)
 	}
 
