@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This repo is not updated anymore, as I sadly moved on from Concourse.
+
 ## Github PR resource
 
 [![Build Status](https://travis-ci.org/telia-oss/github-pr-resource.svg?branch=master)](https://travis-ci.org/telia-oss/github-pr-resource)
